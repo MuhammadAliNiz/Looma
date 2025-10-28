@@ -41,7 +41,7 @@ public class UserService {
                 .bio(userProfile.getBio())
                 .profilePictureUrl(s3Service.getFileUrl(userProfile.getProfilePictureUrl()))
                 .dateOfBirth(userProfile.getDateOfBirth())
-                .gender(userProfile.getGender().name())
+                .gender(userProfile.getGender() != null ? userProfile.getGender().name() : null)
                 .githubUsername(userProfile.getGithubUsername())
                 .linkedinUrl(userProfile.getLinkedinUrl())
                 .twitterHandle(userProfile.getTwitterHandle())
