@@ -34,7 +34,7 @@ public class UserService {
 
         return ProfileResponse.builder()
                 .userId(userDetails.getUserId())
-                .username(userDetails.getUsername())
+                .username(userDetails.getActualUsername())
                 .email(userDetails.getEmail())
                 .firstName(userProfile.getFirstName())
                 .lastName(userProfile.getLastName())
