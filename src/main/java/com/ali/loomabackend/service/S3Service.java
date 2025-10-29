@@ -1,6 +1,8 @@
 package com.ali.loomabackend.service;
 
 
+import com.ali.loomabackend.exception.custom.BusinessException;
+import com.ali.loomabackend.model.enums.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,7 +15,7 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 
-import java.io.IOException; // Keep IOException
+import java.io.IOException;
 import java.time.Duration;
 import java.util.Map;
 import java.util.UUID;
@@ -32,7 +34,6 @@ public class S3Service {
     @Value("${aws.s3.region}")
     private String region;
 
-    // Make sure controller advice handles IOException or controller handles it
     public String uploadFile(MultipartFile file, String folder, String userId) throws IOException {
         String fileName = generateFileName(file.getOriginalFilename());
         String key = folder + userId + "/" + fileName;
@@ -55,22 +56,18 @@ public class S3Service {
         } catch (S3Exception e) {
             log.error("Error uploading file to S3: {}", e.awsErrorDetails().errorMessage(), e);
             // Throw a generic RuntimeException
-            throw new RuntimeException("Failed to upload file to S3: " + e.awsErrorDetails().errorMessage());
-        }
+            throw new BusinessException(ErrorCode.MEDIA_UPLOAD_FAILED,
+                    "Failed to upload file to S3: " + e.awsErrorDetails().errorMessage());        }
         // Allow IOException from file.getBytes() to propagate
     }
 
     public String getFileUrl(String key) {
         if (key == null || key.isEmpty()) {
-            return null; // Or return a default placeholder URL
+            return null;
         }
-        // This format might be specific to DigitalOcean Spaces.
         return String.format("https://%s.%s.digitaloceanspaces.com/%s", bucketName, region, key);
     }
 
-    /**
-     * Generate presigned URL (temporary access)
-     */
     public String generatePresignedUrl(String key, Duration duration) {
         if (key == null || key.isEmpty()) {
             return null;
@@ -95,9 +92,6 @@ public class S3Service {
         }
     }
 
-    /**
-     * Delete file from S3
-     */
     public void deleteFile(String key) {
         if (key == null || key.isEmpty()) {
             log.warn("Attempted to delete file with null or empty key.");
@@ -114,13 +108,10 @@ public class S3Service {
 
         } catch (S3Exception e) {
             log.error("Error deleting file from S3: {}", e.awsErrorDetails().errorMessage(), e);
-            throw new RuntimeException("Failed to delete file from S3");
-        }
+            throw new BusinessException(ErrorCode.MEDIA_UPLOAD_FAILED,
+                    "Failed to upload file to S3: " + e.awsErrorDetails().errorMessage());        }
     }
 
-    /**
-     * Check if file exists in S3
-     */
     public boolean fileExists(String key) {
         if (key == null || key.isEmpty()) {
             return false;
@@ -142,9 +133,6 @@ public class S3Service {
         }
     }
 
-    /**
-     * Get file metadata
-     */
     public Map<String, String> getFileMetadata(String key) {
         if (key == null || key.isEmpty()) {
             throw new IllegalArgumentException("Key cannot be null or empty to fetch metadata.");
@@ -164,9 +152,6 @@ public class S3Service {
         }
     }
 
-    /**
-     * Generate unique file name
-     */
     private String generateFileName(String originalFilename) {
         String extension = "";
         if (originalFilename != null && originalFilename.contains(".")) {

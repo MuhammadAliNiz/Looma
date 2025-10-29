@@ -1,15 +1,13 @@
 package com.ali.loomabackend.service;
 
-import com.ali.loomabackend.exception.custom.AccountBannedException;
-import com.ali.loomabackend.exception.custom.AccountDeletedException;
-import com.ali.loomabackend.exception.custom.ResourceAlreadyExistsException;
-import com.ali.loomabackend.exception.custom.ResourceNotFoundException;
+import com.ali.loomabackend.exception.custom.*;
 import com.ali.loomabackend.model.dto.request.auth.FinalRegisterRequest;
 import com.ali.loomabackend.model.dto.request.auth.InitialRegisterRequest;
 import com.ali.loomabackend.model.dto.request.auth.LoginRequest;
 import com.ali.loomabackend.model.dto.request.auth.VerifyEmailRequest;
 import com.ali.loomabackend.model.dto.response.auth.*;
 import com.ali.loomabackend.model.entity.user.*;
+import com.ali.loomabackend.model.enums.ErrorCode;
 import com.ali.loomabackend.model.enums.user.UserRolesEnum;
 import com.ali.loomabackend.model.enums.user.UserStatus;
 import com.ali.loomabackend.repository.user.*;
@@ -104,7 +102,7 @@ public class AuthService {
                 () -> new UsernameNotFoundException("Email not found")
         );
 
-        if(tempUser.getIsUsed()) {
+        if(Boolean.TRUE.equals(tempUser.getIsUsed())) {
             throw new IllegalArgumentException("Email has already been verified.");
         }
 
@@ -131,7 +129,7 @@ public class AuthService {
         if(tempUser.getExpiryDate().isBefore(LocalDateTime.now())) {
             throw new IllegalArgumentException("Verification code has expired. Please request a new one.");
         }
-        if(tempUser.getIsUsed()) {
+        if(Boolean.TRUE.equals(tempUser.getIsUsed())) {
             throw new IllegalArgumentException("Verification code has already been used.");
         }
 
@@ -160,7 +158,7 @@ public class AuthService {
                 () -> new ResourceNotFoundException("Email not found")
         );
 
-        if(!tempUser.getVerified()) {
+        if(Boolean.FALSE.equals(tempUser.getVerified())) {
             throw new IllegalArgumentException("Email not verified. Please verify your email first.");
         }
 
@@ -221,11 +219,10 @@ public class AuthService {
     @Transactional
     public AuthResponse loginUser(LoginRequest loginRequest) {
 
-        User user = userRepository.findByUsername(loginRequest.getUsername())
+        User user = userRepository.findByUsernameOrEmail(loginRequest.getUsername(), loginRequest.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("Invalid username or password."));
-
         if(!user.isEmailVerified()){
-            throw new IllegalArgumentException("Email not verified. Please verify your email.");
+            throw new AuthorizationException(ErrorCode.EMAIL_NOT_VERIFIED);
         }
 
         if(user.getDeleted() != null && user.getDeleted()){
