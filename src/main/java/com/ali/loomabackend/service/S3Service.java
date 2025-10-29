@@ -29,16 +29,13 @@ public class S3Service {
     @Value("${aws.s3.bucket-name}")
     private String bucketName;
 
-    @Value("${app.image.path-prefix}")
-    private String pathPrefix;
-
     @Value("${aws.s3.region}")
     private String region;
 
     // Make sure controller advice handles IOException or controller handles it
-    public String uploadFile(MultipartFile file, String userId) throws IOException {
+    public String uploadFile(MultipartFile file, String folder, String userId) throws IOException {
         String fileName = generateFileName(file.getOriginalFilename());
-        String key = pathPrefix + userId + "/" + fileName;
+        String key = folder + userId + "/" + fileName;
 
         try {
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()

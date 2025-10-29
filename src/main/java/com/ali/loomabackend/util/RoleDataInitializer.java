@@ -1,7 +1,7 @@
 package com.ali.loomabackend.util;
 
 import com.ali.loomabackend.model.entity.user.Role;
-import com.ali.loomabackend.model.enums.UserRolesEnum;
+import com.ali.loomabackend.model.enums.user.UserRolesEnum;
 import com.ali.loomabackend.repository.user.RoleRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;

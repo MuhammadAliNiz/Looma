@@ -9,6 +9,7 @@ import com.ali.loomabackend.security.UserDetailsImpl;
 import com.ali.loomabackend.service.S3Service;
 import com.ali.loomabackend.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,6 +18,7 @@ import java.io.IOException;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class UserService {
     private final UserProfileRepository userProfileRepository;
     private final SecurityUtils securityUtils;
@@ -50,28 +52,26 @@ public class UserService {
     }
 
     @Transactional
-    public ProfilePicResponse uploadProfilePic(MultipartFile profilePic) throws IOException { // Re-added throws IOException
+    public ProfilePicResponse uploadProfilePic(MultipartFile profilePic) throws IOException {
         UserDetailsImpl userDetails = securityUtils.getCurrentUserDetails().orElseThrow(
                 () -> new ResourceNotFoundException("User not found. Please log in.")
         );
 
-        // Assuming s3Service.uploadFile throws IOException as per original user files
-        String s3Key = s3Service.uploadFile(profilePic, userDetails.getUserId().toString());
+        String s3Key = s3Service.uploadFile(profilePic, "images/profilePic", userDetails.getUserId().toString());
 
         UserProfile userProfile = userProfileRepository.findByUserId(userDetails.getUserId()).orElseThrow(
                 () -> new ResourceNotFoundException("User profile not found for user ID: " + userDetails.getUserId())
         );
 
-        // Delete old profile picture if it exists
         String oldS3Key = userProfile.getProfilePictureUrl();
         if (oldS3Key != null && !oldS3Key.isEmpty()) {
             try {
-                // Assuming s3Service.deleteFile throws RuntimeException as per original user files
+
                 s3Service.deleteFile(oldS3Key);
             } catch (RuntimeException e) { // Changed from BusinessException to RuntimeException
                 // Log the error but don't fail the upload. Maybe the old file was already deleted.
                 // You might want a queue for failed deletions.
-                System.err.println("Failed to delete old profile picture: " + oldS3Key + " | Error: " + e.getMessage());
+                log.error("Failed to delete old profile picture: {} | Error: {}", oldS3Key, e.getMessage());
             }
         }
 

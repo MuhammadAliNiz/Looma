@@ -1,5 +1,5 @@
 package com.ali.loomabackend.model.entity.user;
-import com.ali.loomabackend.model.enums.UserStatus;
+import com.ali.loomabackend.model.enums.user.UserStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;

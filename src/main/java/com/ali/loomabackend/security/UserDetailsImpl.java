@@ -1,16 +1,13 @@
 package com.ali.loomabackend.security;
 
 
-import com.ali.loomabackend.model.entity.user.User;
-import com.ali.loomabackend.model.enums.UserStatus;
+import com.ali.loomabackend.model.enums.user.UserStatus;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.UUID;
 
 /**

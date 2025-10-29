@@ -2,7 +2,7 @@ package com.ali.loomabackend.repository.user;
 
 
 import com.ali.loomabackend.model.entity.user.User;
-import com.ali.loomabackend.model.enums.UserStatus;
+import com.ali.loomabackend.model.enums.user.UserStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -24,7 +24,6 @@ import java.util.UUID;
 @Table(name = "temp_users", indexes = {
         @Index(name = "idx_temp_user_email", columnList = "email"),
         @Index(name = "idx_temp_user_expiry", columnList = "expiry_date"),
-        @Index(name = "idx_temp_user_used", columnList = "used")
 })
 public class TempUser {
 

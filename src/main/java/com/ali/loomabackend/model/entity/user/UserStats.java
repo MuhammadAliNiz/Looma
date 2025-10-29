@@ -19,7 +19,6 @@ import java.util.UUID;
 @Table(name = "user_stats", indexes = {
         @Index(name = "idx_stats_user_id", columnList = "user_id", unique = true),
         @Index(name = "idx_followers_count", columnList = "followers_count"),
-        @Index(name = "idx_reputation_score", columnList = "reputation_score")
 })
 public class UserStats {
 

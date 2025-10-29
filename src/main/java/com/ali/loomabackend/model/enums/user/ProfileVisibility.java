@@ -1,4 +1,4 @@
-package com.ali.loomabackend.model.enums;
+package com.ali.loomabackend.model.enums.user;
 
 public enum ProfileVisibility {
     PUBLIC,
