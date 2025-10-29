@@ -57,7 +57,7 @@ public class UserService {
                 () -> new ResourceNotFoundException("User not found. Please log in.")
         );
 
-        String s3Key = s3Service.uploadFile(profilePic, "images/profilePic", userDetails.getUserId().toString());
+        String s3Key = s3Service.uploadFile(profilePic, "images/profilePic/", userDetails.getUserId().toString());
 
         UserProfile userProfile = userProfileRepository.findByUserId(userDetails.getUserId()).orElseThrow(
                 () -> new ResourceNotFoundException("User profile not found for user ID: " + userDetails.getUserId())
