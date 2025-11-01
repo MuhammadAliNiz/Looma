@@ -27,9 +27,6 @@ public class UserSearchEventListener {
         }
     }
 
-    /**
-     * Re-index user when updated
-     */
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handleUserUpdated(UserUpdatedEvent event) {

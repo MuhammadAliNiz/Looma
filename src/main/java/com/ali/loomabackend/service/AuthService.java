@@ -14,6 +14,7 @@ import com.ali.loomabackend.model.enums.user.UserStatus;
 import com.ali.loomabackend.repository.user.*;
 import com.ali.loomabackend.security.UserDetailsImpl;
 import com.ali.loomabackend.security.jwt.JwtTokenProvider;
+import com.ali.loomabackend.service.email.BrevoEmailService;
 import com.ali.loomabackend.service.email.EmailService;
 import com.ali.loomabackend.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +42,7 @@ import java.util.stream.Collectors;
 public class AuthService {
     private final UserRepository userRepository;
     private final TempUserRepository tempUserRepository;
-    private final EmailService emailService;
+    private final BrevoEmailService emailService;
     private final JwtTokenProvider jwtTokenProvider;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;

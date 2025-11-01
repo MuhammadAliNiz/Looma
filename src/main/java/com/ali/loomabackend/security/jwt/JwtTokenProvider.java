@@ -59,9 +59,6 @@ public class JwtTokenProvider {
         return generateTokenFromUserDetails(userDetails);
     }
 
-    /**
-     * Generate access token from UserDetails
-     */
     public String generateAccessToken(UserDetails userDetails) {
         if (userDetails instanceof UserDetailsImpl) {
             return generateTokenFromUserDetails((UserDetailsImpl) userDetails);
@@ -69,9 +66,6 @@ public class JwtTokenProvider {
         throw new IllegalArgumentException("UserDetails must be instance of UserDetailsImpl");
     }
 
-    /**
-     * Generate token from UserDetailsImpl
-     */
     private String generateTokenFromUserDetails(UserDetailsImpl userDetails) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", userDetails.getUserId().toString());
