@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/posts")
@@ -47,8 +48,16 @@ public class PostController {
 
         PostResponse postResponse = postService.createPost(trimmedContent, visibility, validatedFiles);
 
-        ApiResponse<PostResponse> apiResponse = ApiResponse.success(postResponse);
+        ApiResponse<PostResponse> apiResponse = ApiResponse.success(postResponse, "Post retrieved successfully.");
 
         return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
     }
+
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<ApiResponse<Void>> deletePost(@PathVariable UUID postId) {
+        postService.deletePost(postId);
+        ApiResponse<Void> apiResponse = ApiResponse.success(null, "Post deleted successfully.");
+        return ResponseEntity.ok(apiResponse);
+    }
+
 }

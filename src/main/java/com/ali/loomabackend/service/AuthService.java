@@ -1,5 +1,6 @@
 package com.ali.loomabackend.service;
 
+import com.ali.loomabackend.event.UserEvents;
 import com.ali.loomabackend.exception.custom.*;
 import com.ali.loomabackend.model.dto.request.auth.FinalRegisterRequest;
 import com.ali.loomabackend.model.dto.request.auth.InitialRegisterRequest;
@@ -16,6 +17,7 @@ import com.ali.loomabackend.security.jwt.JwtTokenProvider;
 import com.ali.loomabackend.service.email.EmailService;
 import com.ali.loomabackend.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -48,14 +50,23 @@ public class AuthService {
     private final SecurityUtils securityUtils;
     private final UserProfileRepository userProfileRepository;
     private final UserRoleRepository userRoleRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
+    @Transactional(readOnly = true)
     public CheckEmailUsernameResponse isUsernameAvailable(String username) {
-        boolean isAvailable = !userRepository.existsByUsername(username);
+        if (username == null || username.trim().isEmpty()) {
+            throw new IllegalArgumentException("Username cannot be empty");
+        }
+        boolean isAvailable = !userRepository.existsByUsername(username.trim());
         return new CheckEmailUsernameResponse(isAvailable);
     }
 
+    @Transactional(readOnly = true)
     public CheckEmailUsernameResponse isEmailAvailable(String email) {
-        boolean isAvailable = !userRepository.existsByEmail(email);
+        if (email == null || email.trim().isEmpty()) {
+            throw new IllegalArgumentException("Email cannot be empty");
+        }
+        boolean isAvailable = !userRepository.existsByEmail(email.toLowerCase().trim());
         return new CheckEmailUsernameResponse(isAvailable);
     }
 
@@ -205,6 +216,9 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String accessToken = jwtTokenProvider.generateAccessToken(SecurityContextHolder.getContext().getAuthentication());
+
+        // 🔥 Publish event to index in Elasticsearch
+        applicationEventPublisher.publishEvent(new UserEvents.UserCreatedEvent(user.getId()));
 
         return AuthResponse.builder()
                 .accessToken(accessToken)

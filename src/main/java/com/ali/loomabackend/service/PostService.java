@@ -161,11 +161,16 @@ public class PostService {
     }
 
     @Transactional
-    public void deletePost(UUID postId, UUID userId) {
+    public void deletePost(UUID postId) {
+        UserDetailsImpl userDetails = securityUtils.getCurrentUserDetails().orElseThrow(
+                () -> new IllegalStateException("No authenticated user found")
+        );
+
+
         Post post = postRepository.findByIdAndDeletedFalse(postId)
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found"));
 
-        if (!post.getAuthorId().equals(userId)) {
+        if (!post.getAuthorId().equals(userDetails.getUserId())) {
             throw new IllegalStateException("You don't have permission to delete this post");
         }
 
@@ -182,8 +187,9 @@ public class PostService {
             }
         }
 
-        userStatsRepository.decrementPostsCount(userId);
+        userStatsRepository.decrementPostsCount(userDetails.getUserId());
 
         log.info("Deleted post {} and {} media files", postId, s3Keys.size());
     }
+
 }
