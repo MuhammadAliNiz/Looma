@@ -75,7 +75,7 @@ jobs:
             
             # Elasticsearch Configuration
             ELASTICSEARCH_PASSWORD=${{ secrets.ELASTICSEARCH_PASSWORD }}
-            ElasticSearch_URL=http:http://159.223.59.78:9200
+            ElasticSearch_URL=http://159.223.59.78:9200
             ElasticSearch_Username=elastic
             ElasticSearch_Password=${{ secrets.ELASTICSEARCH_PASSWORD }}
             
