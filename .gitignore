@@ -6,6 +6,24 @@ HELP.md
 target/
 build/
 
+# Environment variables
+.env.local
+.env.*.local
+*.env
+!.env.example
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Build
+*.jar
+!.mvn/wrapper/maven-wrapper.jar
+
+# Logs
+*.log
+
 # Allow specific nested target/build folders if needed (uncommon)
 !**/src/main/**/target/
 !**/src/test/**/target/
@@ -25,9 +43,7 @@ build/
 .sts4-cache
 
 ### IntelliJ IDEA ###
-.idea/
 *.iws
-*.iml
 *.ipr
 
 ### NetBeans ###
@@ -36,6 +52,3 @@ build/
 /dist/
 /nbdist/
 /.nb-gradle/
-
-### VS Code ###
-.vscode/

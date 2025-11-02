@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  springboot-app:
+    image: muhammadaliniz/looma:latest
+    container_name: looma
+    restart: unless-stopped
+    ports:
+      - "25565:25565"
+    env_file:
+      - .env
+    networks:
+      - looma-network
+
+networks:
+  looma-network:
+    driver: bridge
