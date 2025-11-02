@@ -3,7 +3,7 @@ version: '3.8'
 services:
   springboot-app:
     image: muhammadaliniz/looma:latest
-    container_name: looma
+    container_name: looma-backend
     restart: unless-stopped
     ports:
       - "25565:25565"
@@ -11,7 +11,27 @@ services:
       - .env
     networks:
       - looma-network
+      - keycloak_keycloak-network
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.3
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - xpack.security.enabled=false
+    ports:
+      - "9200:9200"
+    networks:
+      - looma-network
+    healthcheck:
+      test: ["CMD", "curl", "-sS", "http://localhost:9200/"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
 networks:
   looma-network:
     driver: bridge
+  keycloak_keycloak-network:
+    external: true
