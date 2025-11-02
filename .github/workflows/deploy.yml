@@ -34,7 +34,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/looma-backend:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/looma:latest
 
       - name: Create .env file on VPS
         uses: appleboy/ssh-action@master
@@ -46,13 +46,13 @@ jobs:
             cd /root/springboot
             cat > .env << 'EOF'
             # Database Configuration
-            DB_URL=jdbc:postgresql://postgres:5432/springboot_db
-            DB_USERNAME=springboot_user
+            DB_URL=jdbc:postgresql://postgres:5432/looma
+            DB_USERNAME=admin
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
             
             # PostgreSQL Container Configuration
-            POSTGRES_DB=springboot_db
-            POSTGRES_USER=springboot_user
+            POSTGRES_DB=looma
+            POSTGRES_USER=admin
             POSTGRES_PASSWORD=${{ secrets.DB_PASSWORD }}
             
             # JWT Configuration
